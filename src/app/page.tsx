@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import {
   FaUser,
@@ -14,8 +15,19 @@ import {
   FaBook,
   FaBars,
   FaTimes,
+  FaGraduationCap,
 } from "react-icons/fa";
-import { SiReact, SiNodedotjs, SiPython, SiAmazon } from "react-icons/si";
+import {
+  SiReact,
+  SiNextdotjs,
+  SiNestjs,
+  SiGraphql,
+  SiPostgresql,
+  SiDocker,
+  SiTailwindcss,
+  SiHasura,
+  SiTypescript,
+} from "react-icons/si";
 import {
   MdEmail,
   MdPhone,
@@ -23,6 +35,7 @@ import {
   MdShare,
   MdOpenInNew,
 } from "react-icons/md";
+import { AVATAR_URL } from "../utils/avatar";
 
 export default function ProfilePage() {
   const [activeSection, setActiveSection] = useState<string>("");
@@ -85,12 +98,12 @@ export default function ProfilePage() {
             </button>
 
             {/* Navigation Links - Desktop */}
-            <div className="hidden md:flex items-center justify-center gap-2 flex-1">
+            <div className="hidden md:flex items-center justify-center gap-1.5 lg:gap-2 flex-1 flex-wrap">
               {sections.map((section) => (
                 <motion.button
                   key={section.id}
                   onClick={() => scrollToSection(section.id)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
+                  className={`px-3 lg:px-4 py-1.5 lg:py-2 rounded-full text-xs lg:text-sm font-medium whitespace-nowrap transition-all duration-300 ${
                     activeSection === section.id
                       ? "bg-white/35 text-white shadow-md shadow-white/20"
                       : "bg-white/10 text-white/70 hover:bg-white/20 hover:text-white/90"
@@ -113,9 +126,9 @@ export default function ProfilePage() {
               >
                 <Link
                   href="/bai-viet"
-                  className="px-4 lg:px-5 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap transition-all duration-300 bg-gradient-to-r from-orange-400/90 to-pink-500/90 text-white hover:from-orange-400 hover:to-pink-500 shadow-lg shadow-orange-500/30 border border-orange-300/30 inline-flex items-center gap-2 relative overflow-hidden"
+                  className="px-3 lg:px-4 xl:px-5 py-2 lg:py-2.5 rounded-full text-xs lg:text-sm font-semibold whitespace-nowrap transition-all duration-300 bg-gradient-to-r from-orange-400/90 to-pink-500/90 text-white hover:from-orange-400 hover:to-pink-500 shadow-lg shadow-orange-500/30 border border-orange-300/30 inline-flex items-center gap-1.5 lg:gap-2 relative overflow-hidden"
                 >
-                  <FaBook className="w-3.5 h-3.5 relative z-10" />
+                  <FaBook className="w-3 h-3 lg:w-3.5 lg:h-3.5 relative z-10" />
                   <span className="relative z-10">Bài Viết</span>
                   <motion.div
                     className="absolute inset-0 bg-gradient-to-r from-orange-300/20 to-pink-300/20"
@@ -153,31 +166,31 @@ export default function ProfilePage() {
 
       {/* Mobile Menu Drawer */}
       <div
-        className={`fixed top-0 left-0 h-full w-80 max-w-[85vw] z-50 md:hidden transition-transform duration-300 ease-out ${
+        className={`fixed top-0 left-0 h-full w-72 sm:w-80 max-w-[85vw] z-50 md:hidden transition-transform duration-300 ease-out ${
           isMenuOpen ? "translate-x-0" : "-translate-x-full"
         }`}
         style={{ pointerEvents: isMenuOpen ? "auto" : "none" }}
       >
         <div className="h-full bg-gradient-to-br from-purple-900/95 via-blue-900/95 to-indigo-900/95 backdrop-blur-xl border-r border-white/20 shadow-2xl overflow-y-auto">
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             {/* Menu Header */}
-            <div className="flex items-center justify-between mb-8">
-              <h2 className="text-xl font-bold text-white">Menu</h2>
+            <div className="flex items-center justify-between mb-6 sm:mb-8">
+              <h2 className="text-lg sm:text-xl font-bold text-white">Menu</h2>
               <button
                 className="p-2 rounded-lg bg-white/10 text-white hover:bg-white/20 active:scale-95 transition-all"
                 onClick={() => setIsMenuOpen(false)}
               >
-                <FaTimes size={20} />
+                <FaTimes size={18} className="sm:w-5 sm:h-5" />
               </button>
             </div>
 
             {/* Navigation Links */}
-            <div className="space-y-2 mb-6">
+            <div className="space-y-2 mb-4 sm:mb-6">
               {sections.map((section) => (
                 <button
                   key={section.id}
                   onClick={() => scrollToSection(section.id)}
-                  className={`w-full text-left px-4 py-3 rounded-xl text-base font-medium transition-all duration-200 active:scale-[0.98] ${
+                  className={`w-full text-left px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl text-sm sm:text-base font-medium transition-all duration-200 active:scale-[0.98] ${
                     activeSection === section.id
                       ? "bg-white/25 text-white shadow-lg"
                       : "bg-white/10 text-white/80 active:bg-white/20"
@@ -191,51 +204,52 @@ export default function ProfilePage() {
             {/* Bài Viết Button */}
             <Link
               href="/bai-viet"
-              className="w-full px-4 py-3 rounded-xl bg-gradient-to-r from-orange-400/90 to-pink-500/90 text-white font-semibold shadow-lg shadow-orange-500/30 border border-orange-300/30 inline-flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
+              className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl bg-gradient-to-r from-orange-400/90 to-pink-500/90 text-white font-semibold shadow-lg shadow-orange-500/30 border border-orange-300/30 inline-flex items-center justify-center gap-2 active:scale-[0.98] transition-transform text-sm sm:text-base"
               onClick={() => setIsMenuOpen(false)}
             >
-              <FaBook size={18} />
+              <FaBook size={16} className="sm:w-[18px] sm:h-[18px]" />
               <span>Bài Viết</span>
             </Link>
           </div>
         </div>
       </div>
 
-      <div className="px-6 pt-6 pb-24 max-w-7xl mx-auto">
+      <div className="px-4 sm:px-6 pt-4 sm:pt-6 pb-16 sm:pb-24 max-w-7xl mx-auto">
         {/* Profile Summary - Centered */}
-        <div className="flex flex-col items-center mb-12">
-          <div className="w-32 h-32 rounded-full bg-gradient-to-br from-purple-400 to-blue-500 p-1 mb-4">
-            <div className="w-full h-full rounded-full bg-gray-300 overflow-hidden">
-              <div className="w-full h-full bg-gradient-to-br from-purple-200 to-blue-300 flex items-center justify-center">
-                <FaUser size={48} className="text-white" />
-              </div>
+        <div className="flex flex-col items-center mb-8 sm:mb-12">
+          <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-gradient-to-br from-purple-400 to-blue-500 p-1 mb-3 sm:mb-4">
+            <div className="w-full h-full rounded-full overflow-hidden relative">
+              <Image
+                src={AVATAR_URL}
+                alt="Bùi Văn Châu"
+                fill
+                className="object-cover"
+                sizes="(max-width: 640px) 96px, 128px"
+                unoptimized
+              />
             </div>
           </div>
-          <h2 className="text-2xl font-bold text-white mb-2">Bùi Văn Châu</h2>
-          <p className="text-orange-400 text-lg mb-6">
-            Senior Full-Stack Developer
+          <h2 className="text-xl sm:text-2xl font-bold text-white mb-1 sm:mb-2 text-center px-2">
+            Bùi Văn Châu
+          </h2>
+          <p className="text-orange-400 text-base sm:text-lg mb-2 text-center px-2">
+            Full-Stack Web Developer
           </p>
-
-          <div className="flex gap-8 mb-8">
-            {[
-              { value: "5+", label: "Năm KN" },
-              { value: "20+", label: "Dự Án" },
-              { value: "15+", label: "Khách Hàng" },
-            ].map((stat, index) => (
-              <div key={index} className="text-center">
-                <div className="text-2xl font-bold text-white">
-                  {stat.value}
-                </div>
-                <div className="text-gray-300 text-sm">{stat.label}</div>
-              </div>
-            ))}
+          <div className="flex items-start gap-2 text-white/80 text-xs sm:text-sm mb-1 px-4 text-center sm:text-left">
+            <FaGraduationCap
+              size={14}
+              className="text-yellow-400 flex-shrink-0 mt-0.5 sm:mt-0"
+            />
+            <span className="leading-relaxed">
+              Tốt nghiệp loại Giỏi (GPA 3.6/4.0) – Đại học Đông Á, Đà Nẵng
+            </span>
           </div>
         </div>
 
         {/* Two Column Layout */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           {/* Left Column */}
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             {/* About Section */}
             <div id="gioi-thieu" className="scroll-mt-24">
               <SectionCard
@@ -244,11 +258,16 @@ export default function ProfilePage() {
                 iconBg="bg-gradient-to-br from-orange-400 to-orange-600"
                 isActive={activeSection === "gioi-thieu"}
               >
-                <p className="text-white text-sm leading-relaxed">
-                  Tôi là một Full-Stack Developer với hơn 5 năm kinh nghiệm
-                  trong việc phát triển ứng dụng web và mobile. Đam mê công nghệ
-                  và luôn học hỏi những xu hướng mới nhất. Chuyên môn về React,
-                  Node.js, Python và các công nghệ cloud hiện đại.
+                <p className="text-white text-xs sm:text-sm leading-relaxed">
+                  Tôi là lập trình viên Fullstack chuyên về phát triển website
+                  hiện đại, sử dụng Next.js và NestJS làm công nghệ cốt lõi. Tôi
+                  có khả năng xây dựng toàn bộ quy trình phát triển sản phẩm từ
+                  thiết kế kiến trúc hệ thống, triển khai backend và frontend,
+                  đến tối ưu hiệu năng và tự động hoá CI/CD.
+                </p>
+                <p className="text-white text-xs sm:text-sm leading-relaxed mt-2 sm:mt-3">
+                  Tôi yêu thích việc tạo ra những sản phẩm web có giao diện trực
+                  quan, tốc độ cao, và mang lại trải nghiệm người dùng tối ưu.
                 </p>
               </SectionCard>
             </div>
@@ -261,33 +280,53 @@ export default function ProfilePage() {
                 iconBg="bg-gradient-to-br from-yellow-400 to-orange-500"
                 isActive={activeSection === "ky-nang"}
               >
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-2 gap-2 sm:gap-3">
+                  <SkillCard
+                    name="Next.js"
+                    iconComponent={
+                      <SiNextdotjs size={24} className="text-white" />
+                    }
+                  />
                   <SkillCard
                     name="React"
-                    level="Expert"
                     iconComponent={
                       <SiReact size={24} className="text-cyan-400" />
                     }
                   />
                   <SkillCard
-                    name="Node.js"
-                    level="Expert"
+                    name="NestJS"
                     iconComponent={
-                      <SiNodedotjs size={24} className="text-green-500" />
+                      <SiNestjs size={24} className="text-red-500" />
                     }
                   />
                   <SkillCard
-                    name="Python"
-                    level="Advanced"
+                    name="GraphQL"
                     iconComponent={
-                      <SiPython size={24} className="text-yellow-400" />
+                      <SiGraphql size={24} className="text-pink-500" />
                     }
                   />
                   <SkillCard
-                    name="AWS"
-                    level="Advanced"
+                    name="PostgreSQL"
                     iconComponent={
-                      <SiAmazon size={24} className="text-orange-500" />
+                      <SiPostgresql size={24} className="text-blue-600" />
+                    }
+                  />
+                  <SkillCard
+                    name="Docker"
+                    iconComponent={
+                      <SiDocker size={24} className="text-blue-400" />
+                    }
+                  />
+                  <SkillCard
+                    name="TailwindCSS"
+                    iconComponent={
+                      <SiTailwindcss size={24} className="text-cyan-500" />
+                    }
+                  />
+                  <SkillCard
+                    name="Hasura"
+                    iconComponent={
+                      <SiHasura size={24} className="text-purple-500" />
                     }
                   />
                 </div>
@@ -307,31 +346,28 @@ export default function ProfilePage() {
                     iconComponent={
                       <MdEmail size={18} className="text-blue-400" />
                     }
-                    text="minh.nguyen@email.com"
+                    text="buichau40@gmail.com"
+                    href="mailto:buichau40@gmail.com"
                   />
                   <ContactItem
                     iconComponent={
                       <MdPhone size={18} className="text-green-400" />
                     }
-                    text="+84 123 456 789"
+                    text="0362 091 690"
+                    href="tel:0362091690"
                   />
                   <ContactItem
                     iconComponent={
                       <MdLocationOn size={18} className="text-orange-400" />
                     }
-                    text="Hồ Chí Minh, Việt Nam"
-                  />
-                  <ContactItem
-                    iconComponent={
-                      <FaLinkedin size={18} className="text-blue-400" />
-                    }
-                    text="linkedin.com/in/minhnguyen"
+                    text="Đà Nẵng"
                   />
                   <ContactItem
                     iconComponent={
                       <FaGithub size={18} className="text-gray-400" />
                     }
-                    text="github.com/minhnguyen"
+                    text="github.com/Chaudz"
+                    href="https://github.com/Chaudz"
                   />
                 </div>
               </SectionCard>
@@ -339,7 +375,7 @@ export default function ProfilePage() {
           </div>
 
           {/* Right Column */}
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             {/* Experience Section */}
             <div id="kinh-nghiem" className="scroll-mt-24">
               <SectionCard
@@ -351,25 +387,27 @@ export default function ProfilePage() {
                 <div className="space-y-4">
                   {[
                     {
-                      title: "Senior Full-Stack Developer",
-                      company: "TechViet Solutions",
-                      period: "2021 - Hiện tại",
+                      title: "Nhân viên chính thức",
+                      company: "Công ty Cổ phần CRB GROUP",
+                      period: "2025 – nay",
                       description:
-                        "Phát triển và duy trì các ứng dụng web quy mô lớn, quản lý team 6 developers.",
+                        "Dự án: Nhân Sinh Quán – Nền tảng xem tử vi và kết nối người dùng với cố vấn trực tiếp. Công nghệ: Next.js, NestJS, Hasura, PostgreSQL, Docker, TailwindCSS",
+                      contributions: [
+                        "Thiết kế kiến trúc Next.js (App Router) làm nền tảng frontend chính, kết nối với backend Hasura/NestJS.",
+                        "Xây dựng giao diện hiện đại, responsive bằng TailwindCSS, đảm bảo tính thẩm mỹ và hiệu năng.",
+                        "Tích hợp đăng nhập Google và Zalo (OAuth/OpenID), quản lý phiên và refresh token.",
+                        "Phát triển tính năng gọi video trực tiếp (video call) giữa người dùng và cố vấn trong trình duyệt.",
+                        "Xây dựng diễn đàn trao đổi cộng đồng, hồ sơ advisor và module bình luận.",
+                        "Tối ưu hiệu năng render (ISR, caching tầng Edge) và triển khai CI/CD với Docker.",
+                      ],
                     },
                     {
-                      title: "Full-Stack Developer",
-                      company: "Digital Innovation Co.",
-                      period: "2019 - 2021",
+                      title: "Thực tập sinh",
+                      company: "Công ty Naikyo",
+                      period: "2024, 4 tháng",
                       description:
-                        "Xây dựng các giải pháp e-commerce và hệ thống quản lý nội dung.",
-                    },
-                    {
-                      title: "Junior Developer",
-                      company: "StartUp Hub",
-                      period: "2018 - 2019",
-                      description:
-                        "Tham gia phát triển MVP cho các startup công nghệ.",
+                        "Được đào tạo và tham gia phát triển dự án với các công nghệ: GraphQL (Hasura), React, NestJS. Làm quen quy trình làm việc nhóm, code review, và quản lý source bằng Git workflow.",
+                      contributions: [],
                     },
                   ].map((exp, index) => (
                     <ExperienceItem
@@ -378,6 +416,7 @@ export default function ProfilePage() {
                       company={exp.company}
                       period={exp.period}
                       description={exp.description}
+                      contributions={exp.contributions}
                     />
                   ))}
                 </div>
@@ -492,31 +531,28 @@ export default function ProfilePage() {
                     iconComponent={
                       <MdEmail size={18} className="text-blue-400" />
                     }
-                    text="minh.nguyen@email.com"
+                    text="buichau40@gmail.com"
+                    href="mailto:buichau40@gmail.com"
                   />
                   <ContactItem
                     iconComponent={
                       <MdPhone size={18} className="text-green-400" />
                     }
-                    text="+84 123 456 789"
+                    text="0362 091 690"
+                    href="tel:0362091690"
                   />
                   <ContactItem
                     iconComponent={
                       <MdLocationOn size={18} className="text-orange-400" />
                     }
-                    text="Hồ Chí Minh, Việt Nam"
-                  />
-                  <ContactItem
-                    iconComponent={
-                      <FaLinkedin size={18} className="text-blue-400" />
-                    }
-                    text="linkedin.com/in/minhnguyen"
+                    text="Đà Nẵng"
                   />
                   <ContactItem
                     iconComponent={
                       <FaGithub size={18} className="text-gray-400" />
                     }
-                    text="github.com/minhnguyen"
+                    text="github.com/Chaudz"
+                    href="https://github.com/Chaudz"
                   />
                 </div>
               </SectionCard>
@@ -564,21 +600,21 @@ function SectionCard({
 }) {
   return (
     <div
-      className={`backdrop-blur-md rounded-2xl p-5 mb-4 border transition-all duration-200 ${
+      className={`backdrop-blur-md rounded-xl sm:rounded-2xl p-4 sm:p-5 mb-3 sm:mb-4 border transition-all duration-200 ${
         isActive
           ? "bg-white/20 border-white/40 shadow-2xl shadow-white/20"
           : "bg-white/10 border-white/20"
       }`}
     >
-      <div className="flex items-center gap-2 mb-4">
+      <div className="flex items-center gap-2 mb-3 sm:mb-4">
         <div
-          className={`w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-200 ${
+          className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center transition-transform duration-200 flex-shrink-0 ${
             iconBg || "bg-gradient-to-br from-orange-400 to-orange-600"
           } ${isActive ? "scale-110" : ""}`}
         >
           {iconComponent}
         </div>
-        <h3 className="text-lg font-bold text-white">{title}</h3>
+        <h3 className="text-base sm:text-lg font-bold text-white">{title}</h3>
       </div>
       {children}
     </div>
@@ -587,20 +623,19 @@ function SectionCard({
 
 function SkillCard({
   name,
-  level,
   iconComponent,
 }: {
   name: string;
-  level: string;
   iconComponent: React.ReactNode;
 }) {
   return (
-    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/10 transition-transform duration-200 active:scale-[0.98]">
-      <div className="mb-2 flex items-center justify-center">
+    <div className="bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 border border-white/10 transition-transform duration-200 active:scale-[0.98]">
+      <div className="mb-1.5 sm:mb-2 flex items-center justify-center">
         {iconComponent}
       </div>
-      <div className="text-white font-semibold text-sm">{name}</div>
-      <div className="text-gray-300 text-xs">{level}</div>
+      <div className="text-white font-semibold text-xs sm:text-sm text-center leading-tight">
+        {name}
+      </div>
     </div>
   );
 }
@@ -610,20 +645,43 @@ function ExperienceItem({
   company,
   period,
   description,
+  contributions = [],
 }: {
   title: string;
   company: string;
   period: string;
   description: string;
+  contributions?: string[];
 }) {
   return (
-    <div className="flex gap-3">
-      <div className="w-1 bg-orange-400 rounded-full"></div>
-      <div className="flex-1">
-        <div className="text-white font-bold text-sm mb-1">{title}</div>
-        <div className="text-blue-300 text-xs mb-1">{company}</div>
-        <div className="text-gray-300 text-xs mb-2">{period}</div>
-        <div className="text-white text-xs leading-relaxed">{description}</div>
+    <div className="flex gap-2 sm:gap-3">
+      <div className="w-0.5 sm:w-1 bg-orange-400 rounded-full flex-shrink-0"></div>
+      <div className="flex-1 min-w-0">
+        <div className="text-white font-bold text-xs sm:text-sm mb-0.5 sm:mb-1">
+          {title}
+        </div>
+        <div className="text-blue-300 text-xs mb-0.5 sm:mb-1">{company}</div>
+        <div className="text-gray-300 text-xs mb-1.5 sm:mb-2">{period}</div>
+        <div className="text-white text-xs leading-relaxed mb-1.5 sm:mb-2">
+          {description}
+        </div>
+        {contributions.length > 0 && (
+          <div className="mt-2 sm:mt-3 space-y-1 sm:space-y-1.5">
+            <div className="text-white/90 font-semibold text-xs mb-1 sm:mb-1.5">
+              Đóng góp nổi bật:
+            </div>
+            <ul className="list-disc list-inside space-y-0.5 sm:space-y-1">
+              {contributions.map((contribution, index) => (
+                <li
+                  key={index}
+                  className="text-white/80 text-xs leading-relaxed"
+                >
+                  {contribution}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -644,21 +702,23 @@ function ProjectCard({
 }) {
   return (
     <Link href={`/du-an/${id}`}>
-      <div className="bg-white/10 backdrop-blur-sm rounded-xl mt-4 p-4 border border-white/10 relative transition-transform duration-200 active:scale-[0.98] hover:bg-white/15 cursor-pointer">
-        <div className="absolute top-3 right-3 w-6 h-6 flex items-center justify-center text-white/70 hover:text-white active:scale-95 transition-transform">
-          <MdOpenInNew size={16} />
+      <div className="bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl mt-3 sm:mt-4 p-3 sm:p-4 border border-white/10 relative transition-transform duration-200 active:scale-[0.98] hover:bg-white/15 cursor-pointer">
+        <div className="absolute top-2.5 sm:top-3 right-2.5 sm:right-3 w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center text-white/70 hover:text-white active:scale-95 transition-transform">
+          <MdOpenInNew size={14} className="sm:w-4 sm:h-4" />
         </div>
-        <div className="text-white font-bold text-sm mb-2 pr-8">{title}</div>
-        <div className="text-white text-xs mb-3 leading-relaxed">
+        <div className="text-white font-bold text-xs sm:text-sm mb-1.5 sm:mb-2 pr-6 sm:pr-8">
+          {title}
+        </div>
+        <div className="text-white text-xs mb-2 sm:mb-3 leading-relaxed">
           {description}
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-1.5 sm:gap-2">
           {tags.map((tag, tagIndex) => {
             const config = tagConfigs[tagIndex];
             return (
               <span
                 key={tagIndex}
-                className={`${config.bg} ${config.text} ${config.border} backdrop-blur-sm border text-xs font-bold px-2 py-1 rounded-lg`}
+                className={`${config.bg} ${config.text} ${config.border} backdrop-blur-sm border text-xs font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md sm:rounded-lg`}
               >
                 {tag}
               </span>
@@ -673,18 +733,35 @@ function ProjectCard({
 function ContactItem({
   iconComponent,
   text,
+  href,
 }: {
   iconComponent: React.ReactNode;
   text: string;
+  href?: string;
 }) {
-  return (
-    <div className="flex items-center gap-3">
-      <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
+  const content = (
+    <div className="flex items-center gap-2 sm:gap-3">
+      <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0">
         {iconComponent}
       </div>
-      <span className="text-white text-sm">{text}</span>
+      <span className="text-white text-xs sm:text-sm break-words">{text}</span>
     </div>
   );
+
+  if (href) {
+    return (
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="block transition-opacity hover:opacity-80 active:opacity-70"
+      >
+        {content}
+      </a>
+    );
+  }
+
+  return content;
 }
 
 function FloatingButton({
