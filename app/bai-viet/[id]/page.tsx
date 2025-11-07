@@ -1,10 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { motion } from "framer-motion";
 import {
-  FaArrowLeft,
   FaUser,
   FaHeart,
   FaComment,
@@ -18,6 +16,7 @@ import {
   FaChevronDown,
 } from "react-icons/fa";
 import { MdLocationOn } from "react-icons/md";
+import BackButtonHeader from "../../components/BackButtonHeader";
 
 export default function ChiTietBaiVietPage({
   params,
@@ -121,16 +120,7 @@ export default function ChiTietBaiVietPage({
       }}
     >
       {/* Header */}
-      <header className="sticky top-0 z-50 backdrop-blur-lg bg-gradient-to-r from-white/15 via-purple-200/15 to-blue-200/15 border-b border-white/10 shadow-sm">
-        <div className="max-w-4xl mx-auto px-4 md:px-6 py-3">
-          <Link href="/bai-viet" className="inline-block">
-            <button className="flex items-center gap-2 text-white/80 hover:text-white transition-colors">
-              <FaArrowLeft size={18} />
-              <span className="text-sm font-medium">Quay lại</span>
-            </button>
-          </Link>
-        </div>
-      </header>
+      <BackButtonHeader href="/bai-viet" maxWidth="narrow" />
 
       <div className="max-w-4xl  mx-auto px-4 pt-6">
         {/* Post Header Card */}

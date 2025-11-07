@@ -395,6 +395,7 @@ export default function ProfilePage() {
                 <div className="space-y-3">
                   {[
                     {
+                      id: 1,
                       title: "E-Commerce Platform",
                       description:
                         "Nền tảng thương mại điện tử với React & Node.js",
@@ -418,6 +419,7 @@ export default function ProfilePage() {
                       ],
                     },
                     {
+                      id: 2,
                       title: "Task Management App",
                       description:
                         "Ứng dụng quản lý công việc với real-time sync",
@@ -441,6 +443,7 @@ export default function ProfilePage() {
                       ],
                     },
                     {
+                      id: 3,
                       title: "AI Chat Bot",
                       description:
                         "Chatbot thông minh với NLP và machine learning",
@@ -466,6 +469,7 @@ export default function ProfilePage() {
                   ].map((project, index) => (
                     <ProjectCard
                       key={index}
+                      id={project.id}
                       title={project.title}
                       description={project.description}
                       tags={project.tags}
@@ -626,39 +630,43 @@ function ExperienceItem({
 }
 
 function ProjectCard({
+  id,
   title,
   description,
   tags,
   tagConfigs,
 }: {
+  id: number;
   title: string;
   description: string;
   tags: string[];
   tagConfigs: Array<{ bg: string; text: string; border: string }>;
 }) {
   return (
-    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/10 relative transition-transform duration-200 active:scale-[0.98]">
-      <button className="absolute top-3 right-3 w-6 h-6 flex items-center justify-center text-white/70 hover:text-white active:scale-95 transition-transform">
-        <MdOpenInNew size={16} />
-      </button>
-      <div className="text-white font-bold text-sm mb-2 pr-8">{title}</div>
-      <div className="text-white text-xs mb-3 leading-relaxed">
-        {description}
+    <Link href={`/du-an/${id}`}>
+      <div className="bg-white/10 backdrop-blur-sm rounded-xl mt-4 p-4 border border-white/10 relative transition-transform duration-200 active:scale-[0.98] hover:bg-white/15 cursor-pointer">
+        <div className="absolute top-3 right-3 w-6 h-6 flex items-center justify-center text-white/70 hover:text-white active:scale-95 transition-transform">
+          <MdOpenInNew size={16} />
+        </div>
+        <div className="text-white font-bold text-sm mb-2 pr-8">{title}</div>
+        <div className="text-white text-xs mb-3 leading-relaxed">
+          {description}
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {tags.map((tag, tagIndex) => {
+            const config = tagConfigs[tagIndex];
+            return (
+              <span
+                key={tagIndex}
+                className={`${config.bg} ${config.text} ${config.border} backdrop-blur-sm border text-xs font-bold px-2 py-1 rounded-lg`}
+              >
+                {tag}
+              </span>
+            );
+          })}
+        </div>
       </div>
-      <div className="flex flex-wrap gap-2">
-        {tags.map((tag, tagIndex) => {
-          const config = tagConfigs[tagIndex];
-          return (
-            <span
-              key={tagIndex}
-              className={`${config.bg} ${config.text} ${config.border} backdrop-blur-sm border text-xs font-bold px-2 py-1 rounded-lg`}
-            >
-              {tag}
-            </span>
-          );
-        })}
-      </div>
-    </div>
+    </Link>
   );
 }
 
