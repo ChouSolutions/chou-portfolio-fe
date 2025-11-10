@@ -16,6 +16,7 @@ import {
   FaBars,
   FaTimes,
   FaGraduationCap,
+  FaGlobe,
 } from "react-icons/fa";
 import {
   SiReact,
@@ -54,10 +55,33 @@ export default function ProfilePage() {
     setActiveSection(id);
     setIsMenuOpen(false); // Close menu on mobile
 
-    const element = document.getElementById(id);
+    // Find all elements with this id (there might be multiple for responsive design)
+    const elements = document.querySelectorAll(`#${id}`);
+    let element: Element | null = null;
+
+    // Find the element that is actually visible (not hidden)
+    for (const el of elements) {
+      const htmlEl = el as HTMLElement;
+      const style = window.getComputedStyle(htmlEl);
+      if (
+        style.display !== "none" &&
+        style.visibility !== "hidden" &&
+        htmlEl.offsetParent !== null
+      ) {
+        element = el;
+        break;
+      }
+    }
+
+    // Fallback to first element if no visible one found
+    if (!element && elements.length > 0) {
+      element = elements[0];
+    }
+
     if (element) {
       const headerOffset = 120;
-      const elementPosition = element.getBoundingClientRect().top;
+      const elementPosition = (element as HTMLElement).getBoundingClientRect()
+        .top;
       const offsetPosition =
         elementPosition + window.pageYOffset - headerOffset;
 
@@ -217,18 +241,24 @@ export default function ProfilePage() {
       <div className="px-4 sm:px-6 pt-4 sm:pt-6 pb-16 sm:pb-24 max-w-7xl mx-auto">
         {/* Profile Summary - Centered */}
         <div className="flex flex-col items-center mb-8 sm:mb-12">
-          <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-gradient-to-br from-purple-400 to-blue-500 p-1 mb-3 sm:mb-4">
-            <div className="w-full h-full rounded-full overflow-hidden relative">
+          <motion.div
+            className="w-32 h-32 sm:w-32 sm:h-32 rounded-full bg-gradient-to-br from-purple-400 to-blue-500 p-1 mb-3 sm:mb-4 cursor-pointer"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+          >
+            <div className="w-full h-full rounded-full overflow-hidden relative group">
               <Image
                 src={AVATAR_URL}
                 alt="Bùi Văn Châu"
                 fill
-                className="object-cover"
+                className="object-cover transition-transform duration-300 group-hover:scale-110"
                 sizes="(max-width: 640px) 96px, 128px"
                 unoptimized
               />
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-400/0 to-blue-500/0 group-hover:from-purple-400/20 group-hover:to-blue-500/20 transition-all duration-300 rounded-full" />
             </div>
-          </div>
+          </motion.div>
           <h2 className="text-xl sm:text-2xl font-bold text-white mb-1 sm:mb-2 text-center px-2">
             Bùi Văn Châu
           </h2>
@@ -258,16 +288,49 @@ export default function ProfilePage() {
                 iconBg="bg-gradient-to-br from-orange-400 to-orange-600"
                 isActive={activeSection === "gioi-thieu"}
               >
-                <p className="text-white text-xs sm:text-sm leading-relaxed">
-                  Tôi là lập trình viên Fullstack chuyên về phát triển website
-                  hiện đại, sử dụng Next.js và NestJS làm công nghệ cốt lõi. Tôi
-                  có khả năng xây dựng toàn bộ quy trình phát triển sản phẩm từ
-                  thiết kế kiến trúc hệ thống, triển khai backend và frontend,
-                  đến tối ưu hiệu năng và tự động hoá CI/CD.
-                </p>
-                <p className="text-white text-xs sm:text-sm leading-relaxed mt-2 sm:mt-3">
-                  Tôi yêu thích việc tạo ra những sản phẩm web có giao diện trực
-                  quan, tốc độ cao, và mang lại trải nghiệm người dùng tối ưu.
+                <p className="text-white text-xs sm:text-sm leading-relaxed space-y-2">
+                  <span className="block">
+                    Mình là{" "}
+                    <span className="font-semibold text-blue-400">
+                      Web Developer
+                    </span>{" "}
+                    mê làm những website{" "}
+                    <span className="italic text-teal-300">mượt mà</span>,{" "}
+                    <span className="italic text-teal-300">nhanh</span> và{" "}
+                    <span className="italic text-teal-300">đẹp mắt</span>.
+                  </span>
+                  <span className="block">
+                    Thường mình dùng{" "}
+                    <span className="font-semibold text-yellow-300">
+                      Next.js
+                    </span>{" "}
+                    và{" "}
+                    <span className="font-semibold text-yellow-300">
+                      NestJS
+                    </span>{" "}
+                    làm công nghệ chính, lo từ{" "}
+                    <span className="text-purple-300 font-medium">
+                      frontend
+                    </span>{" "}
+                    đến{" "}
+                    <span className="text-purple-300 font-medium">backend</span>{" "}
+                    luôn.
+                  </span>
+                  <span className="block">
+                    Mình thích cảm giác nhìn trang web mình code{" "}
+                    <span className="text-green-300 font-medium">
+                      chạy mượt
+                    </span>
+                    ,{" "}
+                    <span className="text-green-300 font-medium">
+                      load nhanh
+                    </span>{" "}
+                    và mang lại{" "}
+                    <span className="text-pink-300 font-medium">
+                      trải nghiệm dễ chịu cho người dùng
+                    </span>
+                    . 💻✨
+                  </span>
                 </p>
               </SectionCard>
             </div>
@@ -392,6 +455,7 @@ export default function ProfilePage() {
                       period: "2025 – nay",
                       description:
                         "Dự án: Nhân Sinh Quán – Nền tảng xem tử vi và kết nối người dùng với cố vấn trực tiếp. Công nghệ: Next.js, NestJS, Hasura, PostgreSQL, Docker, TailwindCSS",
+                      projectUrl: "https://nhansinhquan.com.vn/",
                       contributions: [
                         "Thiết kế kiến trúc Next.js (App Router) làm nền tảng frontend chính, kết nối với backend Hasura/NestJS.",
                         "Xây dựng giao diện hiện đại, responsive bằng TailwindCSS, đảm bảo tính thẩm mỹ và hiệu năng.",
@@ -416,6 +480,7 @@ export default function ProfilePage() {
                       company={exp.company}
                       period={exp.period}
                       description={exp.description}
+                      projectUrl={exp.projectUrl}
                       contributions={exp.contributions}
                     />
                   ))}
@@ -431,7 +496,13 @@ export default function ProfilePage() {
                 iconBg="bg-gradient-to-br from-purple-500 to-pink-500"
                 isActive={activeSection === "du-an"}
               >
+                {/* is updating */}
                 <div className="space-y-3">
+                  <p className="text-white text-xs sm:text-sm leading-relaxed">
+                    Đang cập nhật...
+                  </p>
+                </div>
+                {/* <div className="space-y-3">
                   {[
                     {
                       id: 1,
@@ -515,7 +586,7 @@ export default function ProfilePage() {
                       tagConfigs={project.tagConfigs}
                     />
                   ))}
-                </div>
+                </div> */}
               </SectionCard>
             </div>
 
@@ -645,12 +716,14 @@ function ExperienceItem({
   company,
   period,
   description,
+  projectUrl,
   contributions = [],
 }: {
   title: string;
   company: string;
   period: string;
   description: string;
+  projectUrl?: string;
   contributions?: string[];
 }) {
   return (
@@ -665,6 +738,20 @@ function ExperienceItem({
         <div className="text-white text-xs leading-relaxed mb-1.5 sm:mb-2">
           {description}
         </div>
+        {projectUrl && (
+          <div className="mb-1.5 sm:mb-2">
+            <a
+              href={projectUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-400 hover:text-blue-300 text-xs underline break-all inline-flex items-center gap-1"
+            >
+              <FaGlobe size={12} />
+              <span>Truy cập website: {projectUrl}</span>
+              <MdOpenInNew size={12} />
+            </a>
+          </div>
+        )}
         {contributions.length > 0 && (
           <div className="mt-2 sm:mt-3 space-y-1 sm:space-y-1.5">
             <div className="text-white/90 font-semibold text-xs mb-1 sm:mb-1.5">
