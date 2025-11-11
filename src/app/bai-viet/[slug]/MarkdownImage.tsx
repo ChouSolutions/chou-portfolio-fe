@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import { getStrapiUrl } from "../../../utils/strapi";
 
 export default function MarkdownImage({
   src,
@@ -27,10 +28,10 @@ export default function MarkdownImage({
   ) {
     // Nếu URL bắt đầu bằng / thì thêm base URL
     if (srcString.startsWith("/")) {
-      imageUrl = `http://localhost:1337${srcString}`;
+      imageUrl = getStrapiUrl(srcString);
     } else {
       // Nếu không có / ở đầu, thêm cả / và base URL
-      imageUrl = `http://localhost:1337/${srcString}`;
+      imageUrl = getStrapiUrl(`/${srcString}`);
     }
   }
 

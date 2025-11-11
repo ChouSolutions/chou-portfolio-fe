@@ -12,6 +12,7 @@ import {
 import { MdOpenInNew } from "react-icons/md";
 import BackButtonHeader from "../../components/BackButtonHeader";
 import ArticleCardClient from "./ArticleCardClient";
+import { getStrapiUrl } from "../../utils/strapi";
 
 interface CoverImage {
   id: number;
@@ -39,8 +40,8 @@ interface ApiPost {
   id: number;
   documentId: string;
   title: string;
-  slug: string;
-  content: string;
+  slug: string | null;
+  content: string | null;
   createdAt: string;
   updatedAt: string;
   publishedAt: string;
@@ -119,7 +120,14 @@ function formatDate(dateString: string): string {
 }
 
 // Hàm extract excerpt từ content (loại bỏ markdown và images)
-function extractExcerpt(content: string, maxLength: number = 150): string {
+function extractExcerpt(
+  content: string | null,
+  maxLength: number = 150
+): string {
+  if (!content) {
+    return "Không có mô tả";
+  }
+
   // Loại bỏ markdown images: ![alt](url)
   let text = content.replace(/!\[.*?\]\(.*?\)/g, "");
   // Loại bỏ markdown links: [text](url)
@@ -144,7 +152,10 @@ function extractExcerpt(content: string, maxLength: number = 150): string {
 }
 
 // Hàm kiểm tra content có chứa image không
-function hasImage(content: string): boolean {
+function hasImage(content: string | null): boolean {
+  if (!content) {
+    return false;
+  }
   return (
     /!\[.*?\]\(.*?\)/.test(content) ||
     /\.(jpg|jpeg|png|gif|webp)/i.test(content)
@@ -152,7 +163,11 @@ function hasImage(content: string): boolean {
 }
 
 // Hàm extract tags từ content (tìm các từ khóa phổ biến)
-function extractTags(content: string): string[] {
+function extractTags(content: string | null): string[] {
+  if (!content) {
+    return [];
+  }
+
   const commonTags = [
     "React",
     "Next.js",
@@ -184,15 +199,12 @@ function extractTags(content: string): string[] {
 // Fetch posts với ISR và cache tags
 async function getPosts(): Promise<Post[]> {
   try {
-    const response = await fetch(
-      "http://localhost:1337/api/fffs?populate=cover",
-      {
-        next: {
-          revalidate: 60, // ISR: revalidate mỗi 60 giây
-          tags: ["posts"], // Tag để có thể revalidate on-demand
-        },
-      }
-    );
+    const response = await fetch(`${getStrapiUrl()}/api/posts?populate=cover`, {
+      next: {
+        revalidate: 60, // ISR: revalidate mỗi 60 giây
+        tags: ["posts"], // Tag để có thể revalidate on-demand
+      },
+    });
 
     if (!response.ok) {
       throw new Error("Failed to fetch posts");
@@ -206,27 +218,29 @@ async function getPosts(): Promise<Post[]> {
       const imageUrl = cover[0].url;
       // Nếu URL là relative path, thêm base URL
       if (imageUrl.startsWith("/")) {
-        return `http://localhost:1337${imageUrl}`;
+        return getStrapiUrl(imageUrl);
       }
       return imageUrl;
     };
 
-    const mappedPosts: Post[] = data.data.map((apiPost) => ({
-      id: apiPost.id,
-      slug: apiPost.slug,
-      title: apiPost.title,
-      excerpt: extractExcerpt(apiPost.content),
-      author: "Bùi Văn Châu",
-      date: formatDate(apiPost.publishedAt || apiPost.createdAt),
-      views: "0",
-      likes: 0,
-      comments: 0,
-      tags: extractTags(apiPost.content),
-      image:
-        hasImage(apiPost.content) ||
-        (apiPost.cover !== null && apiPost.cover.length > 0),
-      coverImageUrl: getCoverImageUrl(apiPost.cover),
-    }));
+    const mappedPosts: Post[] = data.data
+      .filter((apiPost) => apiPost.slug !== null) // Chỉ lấy các posts có slug
+      .map((apiPost) => ({
+        id: apiPost.id,
+        slug: apiPost.slug!,
+        title: apiPost.title,
+        excerpt: extractExcerpt(apiPost.content),
+        author: "Bùi Văn Châu",
+        date: formatDate(apiPost.publishedAt || apiPost.createdAt),
+        views: "0",
+        likes: 0,
+        comments: 0,
+        tags: extractTags(apiPost.content),
+        image:
+          hasImage(apiPost.content) ||
+          (apiPost.cover !== null && apiPost.cover.length > 0),
+        coverImageUrl: getCoverImageUrl(apiPost.cover),
+      }));
 
     return mappedPosts;
   } catch (error) {

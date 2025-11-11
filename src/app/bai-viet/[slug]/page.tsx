@@ -6,6 +6,7 @@ import { FaCalendarAlt } from "react-icons/fa";
 import BackButtonHeader from "../../../components/BackButtonHeader";
 import MarkdownImage from "./MarkdownImage";
 import { AVATAR_URL } from "../../../utils/avatar";
+import { getStrapiUrl } from "../../../utils/strapi";
 
 interface CoverImage {
   id: number;
@@ -33,8 +34,8 @@ interface ApiPost {
   id: number;
   documentId: string;
   title: string;
-  slug: string;
-  content: string;
+  slug: string | null;
+  content: string | null;
   createdAt: string;
   updatedAt: string;
   publishedAt: string;
@@ -78,7 +79,7 @@ function formatDate(dateString: string): string {
 async function getPost(slug: string): Promise<ApiPost | null> {
   try {
     const response = await fetch(
-      `http://localhost:1337/api/fffs?filters[slug][$eq]=${slug}&populate=*`,
+      `${getStrapiUrl()}/api/posts?filters[slug][$eq]=${slug}&populate=*`,
       {
         next: {
           revalidate: 60, // ISR: revalidate mỗi 60 giây
@@ -107,7 +108,7 @@ async function getPost(slug: string): Promise<ApiPost | null> {
 // Generate static params cho SSG
 export async function generateStaticParams() {
   try {
-    const response = await fetch("http://localhost:1337/api/fffs?fields=slug", {
+    const response = await fetch(`${getStrapiUrl()}/api/posts?fields=slug`, {
       next: {
         revalidate: 3600, // Revalidate danh sách slugs mỗi giờ
         tags: ["posts"], // Tag để có thể revalidate on-demand
@@ -120,9 +121,11 @@ export async function generateStaticParams() {
 
     const data: ApiResponse = await response.json();
 
-    return data.data.map((post) => ({
-      slug: post.slug,
-    }));
+    return data.data
+      .filter((post) => post.slug !== null)
+      .map((post) => ({
+        slug: post.slug!,
+      }));
   } catch (error) {
     console.error("Error generating static params:", error);
     return [];
@@ -145,18 +148,20 @@ export async function generateMetadata({
   }
 
   const excerpt = post.content
-    .replace(/!\[.*?\]\(.*?\)/g, "")
-    .replace(/\[([^\]]+)\]\([^\)]+\)/g, "$1")
-    .replace(/^#{1,6}\s+/gm, "")
-    .replace(/\*\*([^\*]+)\*\*/g, "$1")
-    .replace(/```[\s\S]*?```/g, "")
-    .substring(0, 160)
-    .trim();
+    ? post.content
+        .replace(/!\[.*?\]\(.*?\)/g, "")
+        .replace(/\[([^\]]+)\]\([^\)]+\)/g, "$1")
+        .replace(/^#{1,6}\s+/gm, "")
+        .replace(/\*\*([^\*]+)\*\*/g, "$1")
+        .replace(/```[\s\S]*?```/g, "")
+        .substring(0, 160)
+        .trim()
+    : "Bài viết về lập trình và công nghệ";
 
   const coverImageUrl =
     post.cover && post.cover.length > 0
       ? post.cover[0].url.startsWith("/")
-        ? `http://localhost:1337${post.cover[0].url}`
+        ? getStrapiUrl(post.cover[0].url)
         : post.cover[0].url
       : undefined;
 
@@ -182,7 +187,15 @@ export async function generateMetadata({
 }
 
 // Component render markdown sử dụng react-markdown
-function MarkdownRenderer({ content }: { content: string }) {
+function MarkdownRenderer({ content }: { content: string | null }) {
+  if (!content) {
+    return (
+      <div className="text-white/70 text-center py-8">
+        <p>Nội dung bài viết đang được cập nhật...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="markdown-content prose prose-invert max-w-none">
       <ReactMarkdown
