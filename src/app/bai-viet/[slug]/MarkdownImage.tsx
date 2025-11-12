@@ -18,7 +18,7 @@ export default function MarkdownImage({
   }
 
   const srcString = typeof src === "string" ? src : String(src);
-  
+
   // Xử lý URL - nếu đã có http:// hoặc https:// thì giữ nguyên
   let imageUrl = srcString;
   if (
@@ -47,15 +47,13 @@ export default function MarkdownImage({
 
   return (
     <div className="my-3 sm:my-4 lg:my-6 w-full flex justify-center">
-      <div
-        className="relative w-full overflow-hidden rounded-lg sm:rounded-xl bg-white/5"
-        style={{ aspectRatio: "16/9" }}
-      >
+      <div className="relative w-full max-w-full overflow-hidden rounded-lg sm:rounded-xl bg-white/5">
         <Image
           src={imageUrl}
           alt={alt || ""}
-          fill
-          className="object-cover"
+          width={1200}
+          height={800}
+          className="w-full h-auto object-contain"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1200px"
           unoptimized
           onError={() => {
@@ -70,4 +68,3 @@ export default function MarkdownImage({
     </div>
   );
 }
-

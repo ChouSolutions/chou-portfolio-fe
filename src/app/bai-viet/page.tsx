@@ -22,7 +22,12 @@ interface CoverImage {
   caption: string | null;
   width: number;
   height: number;
-  formats: any;
+  formats: {
+    large?: { url: string };
+    medium?: { url: string };
+    small?: { url: string };
+    thumbnail?: { url: string };
+  } | null;
   hash: string;
   ext: string;
   mime: string;
@@ -45,7 +50,7 @@ interface ApiPost {
   createdAt: string;
   updatedAt: string;
   publishedAt: string;
-  cover: CoverImage[] | null;
+  cover: CoverImage | CoverImage[] | null;
 }
 
 interface ApiResponse {
@@ -213,9 +218,39 @@ async function getPosts(): Promise<Post[]> {
     const data: ApiResponse = await response.json();
 
     // Hàm helper để lấy URL ảnh cover
-    const getCoverImageUrl = (cover: CoverImage[] | null): string | null => {
-      if (!cover || cover.length === 0) return null;
-      const imageUrl = cover[0].url;
+    const getCoverImageUrl = (
+      cover: CoverImage | CoverImage[] | null
+    ): string | null => {
+      if (!cover) return null;
+
+      // Xử lý trường hợp cover là array
+      let coverImage: CoverImage;
+      if (Array.isArray(cover)) {
+        if (cover.length === 0) return null;
+        coverImage = cover[0];
+      } else {
+        coverImage = cover;
+      }
+
+      if (!coverImage || !coverImage.url) return null;
+
+      // Ưu tiên sử dụng formats.medium hoặc formats.large nếu có (chất lượng tốt hơn)
+      let imageUrl: string | null = null;
+      if (coverImage.formats) {
+        if (coverImage.formats.medium?.url) {
+          imageUrl = coverImage.formats.medium.url;
+        } else if (coverImage.formats.large?.url) {
+          imageUrl = coverImage.formats.large.url;
+        } else if (coverImage.formats.small?.url) {
+          imageUrl = coverImage.formats.small.url;
+        }
+      }
+
+      // Fallback về url gốc nếu không có formats
+      if (!imageUrl) {
+        imageUrl = coverImage.url;
+      }
+
       // Nếu URL là relative path, thêm base URL
       if (imageUrl.startsWith("/")) {
         return getStrapiUrl(imageUrl);
@@ -238,7 +273,8 @@ async function getPosts(): Promise<Post[]> {
         tags: extractTags(apiPost.content),
         image:
           hasImage(apiPost.content) ||
-          (apiPost.cover !== null && apiPost.cover.length > 0),
+          (apiPost.cover !== null &&
+            (Array.isArray(apiPost.cover) ? apiPost.cover.length > 0 : true)),
         coverImageUrl: getCoverImageUrl(apiPost.cover),
       }));
 

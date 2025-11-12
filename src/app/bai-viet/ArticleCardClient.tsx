@@ -92,16 +92,18 @@ export default function ArticleCardClient({
 
         {/* Image Thumbnail */}
         {post.image && (
-          <div className="relative h-48 overflow-hidden">
+          <div className="relative w-full bg-white/5 overflow-hidden">
             {post.coverImageUrl && !imageError ? (
-              <img
-                src={post.coverImageUrl}
-                alt={post.title}
-                className="w-full h-full object-cover"
-                onError={() => setImageError(true)}
-              />
+              <div className="w-full flex justify-center">
+                <img
+                  src={post.coverImageUrl}
+                  alt={post.title}
+                  className="w-full h-auto max-h-96 object-contain"
+                  onError={() => setImageError(true)}
+                />
+              </div>
             ) : (
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/30 via-blue-500/30 to-pink-500/30">
+              <div className="relative h-48 bg-gradient-to-br from-purple-500/30 via-blue-500/30 to-pink-500/30">
                 <div className="absolute inset-0 bg-gradient-to-br from-purple-400/20 via-blue-400/20 to-pink-400/20" />
                 <div className="absolute inset-0 flex items-center justify-center">
                   <FaBook size={48} className="text-white/30" />

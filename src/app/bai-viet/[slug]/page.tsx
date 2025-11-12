@@ -16,7 +16,12 @@ interface CoverImage {
   caption: string | null;
   width: number;
   height: number;
-  formats: any;
+  formats: {
+    large?: { url: string };
+    medium?: { url: string };
+    small?: { url: string };
+    thumbnail?: { url: string };
+  } | null;
   hash: string;
   ext: string;
   mime: string;
@@ -39,7 +44,7 @@ interface ApiPost {
   createdAt: string;
   updatedAt: string;
   publishedAt: string;
-  cover: CoverImage[] | null;
+  cover: CoverImage | CoverImage[] | null;
 }
 
 interface ApiResponse {
@@ -158,12 +163,35 @@ export async function generateMetadata({
         .trim()
     : "Bài viết về lập trình và công nghệ";
 
-  const coverImageUrl =
-    post.cover && post.cover.length > 0
-      ? post.cover[0].url.startsWith("/")
-        ? getStrapiUrl(post.cover[0].url)
-        : post.cover[0].url
-      : undefined;
+  // Helper function để lấy cover image URL
+  const getCoverImageUrl = (
+    cover: CoverImage | CoverImage[] | null
+  ): string | undefined => {
+    if (!cover) return undefined;
+
+    const coverImage = Array.isArray(cover) ? cover[0] : cover;
+    if (!coverImage || !coverImage.url) return undefined;
+
+    // Ưu tiên sử dụng formats.medium hoặc formats.large
+    let imageUrl: string | null = null;
+    if (coverImage.formats) {
+      if (coverImage.formats.medium?.url) {
+        imageUrl = coverImage.formats.medium.url;
+      } else if (coverImage.formats.large?.url) {
+        imageUrl = coverImage.formats.large.url;
+      } else if (coverImage.formats.small?.url) {
+        imageUrl = coverImage.formats.small.url;
+      }
+    }
+
+    if (!imageUrl) {
+      imageUrl = coverImage.url;
+    }
+
+    return imageUrl.startsWith("/") ? getStrapiUrl(imageUrl) : imageUrl;
+  };
+
+  const coverImageUrl = getCoverImageUrl(post.cover);
 
   return {
     title: `${post.title} - Bài Viết`,
