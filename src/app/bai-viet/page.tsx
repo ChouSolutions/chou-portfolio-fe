@@ -234,27 +234,42 @@ async function getPosts(): Promise<Post[]> {
 
       if (!coverImage || !coverImage.url) return null;
 
+      // Helper function để normalize URL (xử lý cả localhost và relative paths)
+      const normalizeUrl = (url: string): string => {
+        // Nếu URL chứa localhost, thay thế bằng base URL
+        if (url.includes("localhost:1337")) {
+          const path = url.replace(/^https?:\/\/[^\/]+/, "");
+          return getStrapiUrl(path);
+        }
+        // Nếu URL là relative path, thêm base URL
+        if (url.startsWith("/")) {
+          return getStrapiUrl(url);
+        }
+        // Nếu URL đã là full URL (https://), giữ nguyên
+        if (url.startsWith("http://") || url.startsWith("https://")) {
+          return url;
+        }
+        // Fallback: thêm base URL
+        return getStrapiUrl(`/${url}`);
+      };
+
       // Ưu tiên sử dụng formats.medium hoặc formats.large nếu có (chất lượng tốt hơn)
       let imageUrl: string | null = null;
       if (coverImage.formats) {
         if (coverImage.formats.medium?.url) {
-          imageUrl = coverImage.formats.medium.url;
+          imageUrl = normalizeUrl(coverImage.formats.medium.url);
         } else if (coverImage.formats.large?.url) {
-          imageUrl = coverImage.formats.large.url;
+          imageUrl = normalizeUrl(coverImage.formats.large.url);
         } else if (coverImage.formats.small?.url) {
-          imageUrl = coverImage.formats.small.url;
+          imageUrl = normalizeUrl(coverImage.formats.small.url);
         }
       }
 
       // Fallback về url gốc nếu không có formats
       if (!imageUrl) {
-        imageUrl = coverImage.url;
+        imageUrl = normalizeUrl(coverImage.url);
       }
 
-      // Nếu URL là relative path, thêm base URL
-      if (imageUrl.startsWith("/")) {
-        return getStrapiUrl(imageUrl);
-      }
       return imageUrl;
     };
 

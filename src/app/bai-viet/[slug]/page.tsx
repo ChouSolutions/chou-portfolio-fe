@@ -163,6 +163,25 @@ export async function generateMetadata({
         .trim()
     : "Bài viết về lập trình và công nghệ";
 
+  // Helper function để normalize URL (xử lý cả localhost và relative paths)
+  const normalizeUrl = (url: string): string => {
+    // Nếu URL chứa localhost, thay thế bằng base URL
+    if (url.includes("localhost:1337")) {
+      const path = url.replace(/^https?:\/\/[^\/]+/, "");
+      return getStrapiUrl(path);
+    }
+    // Nếu URL là relative path, thêm base URL
+    if (url.startsWith("/")) {
+      return getStrapiUrl(url);
+    }
+    // Nếu URL đã là full URL (https://), giữ nguyên
+    if (url.startsWith("http://") || url.startsWith("https://")) {
+      return url;
+    }
+    // Fallback: thêm base URL
+    return getStrapiUrl(`/${url}`);
+  };
+
   // Helper function để lấy cover image URL
   const getCoverImageUrl = (
     cover: CoverImage | CoverImage[] | null
@@ -176,19 +195,19 @@ export async function generateMetadata({
     let imageUrl: string | null = null;
     if (coverImage.formats) {
       if (coverImage.formats.medium?.url) {
-        imageUrl = coverImage.formats.medium.url;
+        imageUrl = normalizeUrl(coverImage.formats.medium.url);
       } else if (coverImage.formats.large?.url) {
-        imageUrl = coverImage.formats.large.url;
+        imageUrl = normalizeUrl(coverImage.formats.large.url);
       } else if (coverImage.formats.small?.url) {
-        imageUrl = coverImage.formats.small.url;
+        imageUrl = normalizeUrl(coverImage.formats.small.url);
       }
     }
 
     if (!imageUrl) {
-      imageUrl = coverImage.url;
+      imageUrl = normalizeUrl(coverImage.url);
     }
 
-    return imageUrl.startsWith("/") ? getStrapiUrl(imageUrl) : imageUrl;
+    return imageUrl;
   };
 
   const coverImageUrl = getCoverImageUrl(post.cover);
