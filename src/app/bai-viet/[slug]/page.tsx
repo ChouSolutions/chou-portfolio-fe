@@ -6,7 +6,7 @@ import { FaCalendarAlt } from "react-icons/fa";
 import BackButtonHeader from "../../../components/BackButtonHeader";
 import MarkdownImage from "./MarkdownImage";
 import { AVATAR_URL } from "../../../utils/avatar";
-import { getStrapiUrl } from "../../../utils/strapi";
+import { getStrapiUrl, isProductionDomain } from "../../../utils/strapi";
 
 interface CoverImage {
   id: number;
@@ -165,7 +165,7 @@ export async function generateMetadata({
 
   // Helper function để normalize URL (xử lý cả localhost và relative paths)
   const normalizeUrl = (url: string): string => {
-    // Nếu URL chứa localhost, thay thế bằng base URL
+    // Nếu URL chứa localhost, thay thế toàn bộ domain bằng base URL
     if (url.includes("localhost:1337")) {
       const path = url.replace(/^https?:\/\/[^\/]+/, "");
       return getStrapiUrl(path);
@@ -174,8 +174,12 @@ export async function generateMetadata({
     if (url.startsWith("/")) {
       return getStrapiUrl(url);
     }
-    // Nếu URL đã là full URL (https://), giữ nguyên
+    // Nếu URL đã là full URL với domain production (từ env), giữ nguyên
     if (url.startsWith("http://") || url.startsWith("https://")) {
+      if (isProductionDomain(url)) {
+        return url;
+      }
+      // Nếu là domain khác, giữ nguyên
       return url;
     }
     // Fallback: thêm base URL
