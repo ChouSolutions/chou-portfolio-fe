@@ -11,6 +11,11 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   title: "Hồ Sơ - Bùi Văn Châu",
   description: "Profile của Senior Full-Stack Developer",
+  icons: {
+    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
+    apple: [{ url: "/apple-icon.svg", type: "image/svg+xml" }],
+    shortcut: { url: "/icon.svg", type: "image/svg+xml" },
+  },
 };
 
 export default function RootLayout({

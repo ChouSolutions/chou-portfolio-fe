@@ -94,11 +94,15 @@ export default function ArticleCardClient({
         {post.image && (
           <div className="relative w-full bg-white/5 overflow-hidden">
             {post.coverImageUrl && !imageError ? (
-              <div className="w-full flex justify-center">
-                <img
+              <div className="relative w-full flex justify-center min-h-[200px] max-h-96">
+                <Image
                   src={post.coverImageUrl}
                   alt={post.title}
-                  className="w-full h-auto max-h-96 object-contain"
+                  width={800}
+                  height={600}
+                  className="w-full h-auto object-contain"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 800px"
+                  unoptimized
                   onError={() => setImageError(true)}
                 />
               </div>
